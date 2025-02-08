@@ -3,8 +3,8 @@
         <div class="flex">
             <h5 class="text-2xl font-bold mb-4 text-center">Stocks List</h5>
             <div class="ml-auto flex gap-2">
-                <button pButton severity="secondary" (click)="onCompareFund()">Compare Mutual Fund</button>
-                <!-- <button pButton severity="secondary" (click)="onShowNews()">Show News</button> -->
+                <button pButton severity="secondary" (click)="onShowNews()">Latets News</button>
+                <button pButton severity="secondary" (click)="onShowMutualFund()">Mutual Funds</button>
                 <button pButton severity="secondary" (click)="onShowTargets()">Show Targets</button>
             </div>
         </div>
@@ -41,7 +41,9 @@
                             </ng-template>
                         </p-autocomplete>
                         <div>
-                            <button pButton icon="pi pi-pen-to-square" (click)="allowRemove = !allowRemove "
+                            <button pButton *ngIf="!allowRemove" icon="pi pi-pen-to-square"
+                                (click)="allowRemove = !allowRemove " severity="secondary"></button>
+                            <button pButton *ngIf="allowRemove" icon="pi pi-times" (click)="allowRemove = !allowRemove "
                                 severity="secondary"></button>
                         </div>
                     </div>

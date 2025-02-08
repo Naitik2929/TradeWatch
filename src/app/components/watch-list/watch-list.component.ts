@@ -192,7 +192,7 @@ export class StocksListComponent implements OnInit {
     this.router.navigate(['/', 'news'])
   }
 
-  onCompareFund() {
+  onShowMutualFund() {
     this.router.navigate(['/', 'fundcompare'])
   }
 }
