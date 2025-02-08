@@ -1,0 +1,42 @@
+<div class="text-center" *ngIf="isLoading;else temp">
+    <div class="slider bg-gray-100 font-semibold text-base">
+        <div class="slide-track">
+            <div *ngFor="let item of [1,2,3,4,5,6,7,8,9,10]" class="slide">
+                <div class="flex gap-1">
+                    <p-skeleton width="3rem" height="1.5rem"></p-skeleton>
+                    <p-skeleton width="6rem" height="1.5rem"></p-skeleton>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<ng-template #temp>
+    <div class="slider bg-gray-100 font-semibold text-base">
+        <div class="slide-track">
+            <div *ngFor="let item of sliderData" class="slide"
+                [ngClass]="{'positive': !item.change_percentage.startsWith('-'), 'negative': item.change_percentage.startsWith('-')}">
+                <div class="flex gap-1">
+                    <span>
+                        {{item.ticker}}
+                    </span>
+                    <span>
+                        {{item.change_percentage}}
+                    </span>
+                </div>
+            </div>
+            <div *ngFor="let item of sliderData" class="slide"
+                [ngClass]="{'positive': !item.change_percentage.startsWith('-'), 'negative': item.change_percentage.startsWith('-')}">
+                <div class="flex gap-1">
+                    <span>
+                        {{item.ticker}}
+                    </span>
+                    <span>
+                        {{item.change_percentage}}
+                    </span>
+                </div>
+            </div>
+        </div>
+    </div>
+</ng-template>
+
+<router-outlet></router-outlet>

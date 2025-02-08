@@ -1,0 +1,60 @@
+<div class="container">
+
+    <div class="text-center font-semibold text-gray-600 text-3xl mt-5">
+        <span>Mutual Fund Comparison</span>
+    </div>
+    <div class="flex justify-center items-center gap-8 mt-8">
+        <span class="text-2xl">Select Mutual Fund :</span>
+        <p-autocomplete [(ngModel)]="mf1" [suggestions]="filteredMutualFunds"
+            (completeMethod)="filterMutualFunds($event)" optionLabel="schemeName">
+            <ng-template let-mf #item>
+                <div class="flex items-center gap-2">
+                    <div>{{ mf.schemeName }}</div>
+                </div>
+            </ng-template>
+        </p-autocomplete>
+        <p-autocomplete [(ngModel)]="mf2" [suggestions]="filteredMutualFunds"
+            (completeMethod)="filterMutualFunds($event)" optionLabel="schemeName">
+            <ng-template let-mf #item>
+                <div class="flex items-center gap-2">
+                    <div>{{ mf.schemeName }}</div>
+                </div>
+            </ng-template>
+        </p-autocomplete>
+    </div>
+    <div class="text-center mt-5">
+        <button pButton severity="secondary" (click)="onShowResult()">Show Result</button>
+    </div>
+    <div *ngIf="isLoading" class="text-center mt-5">
+        <p-progress-spinner ariaLabel="loading" />
+    </div>
+    <div *ngIf="showResult" class="mt-5 flex flex-col">
+        <highcharts-chart class="p-5" [Highcharts]="highcharts" [options]="chartOptions"
+            style="width: 100%;height: 400px;display: block;">
+        </highcharts-chart>
+        <div class="mt-6 p-4 bg-white rounded-lg">
+            <h5 class="text-xl font-semibold mb-3 text-center">Return Comparison</h5>
+            <div class="grid grid-cols-2 gap-4 text-center">
+                <div class="p-4 border rounded-lg shadow-sm bg-gray-50">
+                    <span class="text-gray-600">{{mf1.schemeName}}</span>
+                    <div class="mt-3">
+                        <h3>1 Year Return: <span>{{getXYearReturn(1,1)| number:'1.2-2'}}%</span></h3>
+                    </div>
+                    <div class="mt-3">
+                        <h3>5 Year Return: <span>{{getXYearReturn(1,5)| number:'1.2-2'}}%</span></h3>
+                    </div>
+                </div>
+                <div class="p-4 border rounded-lg shadow-sm bg-gray-50">
+                    <span class="text-gray-600">{{mf2.schemeName}}</span>
+                    <div class="mt-3">
+                        <h3>1 Year Return: <span>{{getXYearReturn(2,1)| number:'1.2-2'}}%</span>
+                        </h3>
+                    </div>
+                    <div class="mt-3">
+                        <h3>5 Year Return: <span>{{getXYearReturn(2,5)| number:'1.2-2'}}%</span></h3>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,82 @@
+.slider {
+    margin: auto;
+    position: relative;
+    /* Ensure the slider is positioned relative for the pseudo-elements */
+    overflow: hidden;
+    /* Hide overflow to prevent items from spilling out */
+    height: 50px;
+    /* Set a height for the slider */
+    display: flex;
+    /* Use flexbox for alignment */
+    align-items: center;
+    /* Center items vertically */
+}
+
+.slider::before,
+.slider::after {
+    background: linear-gradient(to right, rgba(255, 255, 255, 1) 0%, rgba(255, 255, 255, 0) 100%);
+    content: "";
+    height: 100px;
+    position: absolute;
+    width: 200px;
+    z-index: 2;
+}
+
+.slider::after {
+    right: 0;
+    top: 0;
+    transform: rotateZ(180deg);
+}
+
+.slider::before {
+    left: 0;
+    top: 0;
+}
+
+.slide-track {
+    animation: scroll 30s linear infinite;
+    display: flex;
+    width: calc(250px * 14);
+    /* Adjust this based on the number of slides */
+    align-items: center;
+    /* Center items vertically within the track */
+}
+
+.slide {
+    height: 40px;
+    /* Height of each slide */
+    width: 250px;
+    /* Width of each slide */
+    display: flex;
+    /* Use flexbox for the slide */
+    align-items: center;
+    /* Center items vertically within the slide */
+    justify-content: center;
+    /* Center items horizontally within the slide */
+    padding: 10px;
+    /* Add padding for spacing */
+    margin: 0 10px;
+    /* Add margin between slides */
+    /* Optional: Background color for each slide */
+}
+
+.positive {
+    color: green;
+    /* Color for positive change */
+}
+
+.negative {
+    color: red;
+    /* Color for negative change */
+}
+
+@keyframes scroll {
+    0% {
+        transform: translateX(0);
+    }
+
+    100% {
+        transform: translateX(calc(-250px * 7));
+
+    }
+}

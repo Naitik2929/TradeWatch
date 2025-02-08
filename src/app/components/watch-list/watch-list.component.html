@@ -1,0 +1,140 @@
+<div class="flex justify-center p-4">
+    <div class="w-full max-w-4xl">
+        <div class="flex">
+            <h5 class="text-2xl font-bold mb-4 text-center">Stocks List</h5>
+            <div class="ml-auto flex gap-2">
+                <button pButton severity="secondary" (click)="onCompareFund()">Compare Mutual Fund</button>
+                <!-- <button pButton severity="secondary" (click)="onShowNews()">Show News</button> -->
+                <button pButton severity="secondary" (click)="onShowTargets()">Show Targets</button>
+            </div>
+        </div>
+
+        <p-tabs [value]="selectedWatchList" (valueChange)="updateStockList($event)">
+            <p-tablist>
+                <p-tab *ngFor="let item of watchList; let index = index" [value]="index">
+                    Watch List {{ index + 1 }}
+                </p-tab>
+            </p-tablist>
+            <p-tabpanels>
+                <p-tabpanel *ngFor="let item of fakeArray; let index = index" [value]="index" class="w-full">
+                    <div class="flex search-bar my-4">
+                        <p-autocomplete [(ngModel)]="selectedStockAdvanced" class="w-full" placeholder="Search & add"
+                            [suggestions]="filteredStocks" (completeMethod)="filterStock($event)">
+                            <ng-template let-stock pTemplate="item">
+                                <div class="flex justify-between items-center w-full gap-2">
+                                    <div class="flex flex-col">
+                                        <div>
+                                            {{ stock.symbol }}
+                                        </div>
+                                        <span class="text-xs text-end font-semibold">
+                                            {{stock.name}}
+                                        </span>
+                                    </div>
+                                    <div class="ml-auto">
+                                        <button *ngIf="!isStockInWatchlist(stock); else check" pButton icon="pi pi-plus"
+                                            severity="secondary" (click)="addStock(stock)"></button>
+                                        <ng-template #check>
+                                            <button cla ss="text-green-500" pButton icon="pi pi-check"></button>
+                                        </ng-template>
+                                    </div>
+                                </div>
+                            </ng-template>
+                        </p-autocomplete>
+                        <div>
+                            <button pButton icon="pi pi-pen-to-square" (click)="allowRemove = !allowRemove "
+                                severity="secondary"></button>
+                        </div>
+                    </div>
+
+                    <p-table [value]="stockList" class="w-full mt-3 shadow-lg rounded-lg overflow-hidden">
+                        <ng-template pTemplate="header">
+                            <tr class="bg-gray-100">
+                                <th class="text-left py-3 px-4 font-semibold">Stock</th>
+                                <th class="text-left py-3 px-4 font-semibold" pSortableColumn="lastPrice">
+                                    Price <p-sortIcon field="lastPrice" /></th>
+                                <th class="text-left py-3 px-4 font-semibold" pSortableColumn="change">
+                                    Change <p-sortIcon field="change" />
+                                </th>
+                                <th class="text-left py-3 px-4 font-semibold" pSortableColumn="change_percent">Change %
+                                    <p-sortIcon field="change_percent" />
+                                </th>
+                                <th>
+
+                                </th>
+                            </tr>
+                        </ng-template>
+                        <ng-template pTemplate="body" let-stock>
+                            <tr class="hover:bg-gray-50 transition-colors">
+                                <td class="py-3 px-4 border-b">{{ stock.symbol }}</td>
+                                <td class="py-3 px-4 border-b">${{
+                                    stock.realTimePrice?stock.realTimePrice:stock.lastPrice }}</td>
+                                <td class="py-3 px-4 border-b">
+                                    <span *ngIf="!stock.change_percent.startsWith('-')" class="text-green-500">
+                                        +{{stock.change}}
+                                    </span>
+                                    <span *ngIf="stock.change_percent.startsWith('-')" class="text-red-500">
+                                        {{stock.change }}
+                                    </span>
+                                </td>
+                                <td class="py-3 px-4 border-b">
+                                    <span *ngIf="!stock.change_percent.startsWith('-')" class="text-green-500">
+                                        +{{stock.change_percent }}
+                                    </span>
+                                    <span *ngIf="stock.change_percent.startsWith('-')" class="text-red-500">
+                                        {{stock.change_percent }}
+                                    </span>
+                                </td>
+                                <td class="flex gap-5">
+                                    <p-button type="button" (click)="showToolBar(stock)" severity="secondary"
+                                        icon="pi pi-bell" />
+                                    <div *ngIf="allowRemove">
+                                        <button pButton icon="pi pi-trash" severity="danger"
+                                            (click)="onRemoveStock(stock)"></button>
+                                    </div>
+                                </td>
+                            </tr>
+                        </ng-template>
+                    </p-table>
+                </p-tabpanel>
+            </p-tabpanels>
+        </p-tabs>
+    </div>
+</div>
+<p-drawer *ngIf="selectedStock" header="Set Alert" [(visible)]="visible4" position="bottom"
+    [style]="{height: '18rem',overflow:'hidden'}">
+    <div class="flex justify-normal">
+        <div class="part-1-left  border-r border-gray-300 pr-8">
+            <div class="flex gap-5">
+                <span class="text-xl">{{selectedStock.symbol}}</span>
+                <h2>Current Price: ${{selectedStock.realTimePrice}}</h2>
+            </div>
+            <div class="mt-4 flex gap-3 items-center">
+                <label for="">Target Price : </label>$
+                <input type="number" [(ngModel)]="targetPrice" pInputText>
+                <button pButton severity="secondary" (click)="onSetTarget()" [disabled]="!(targetPrice>0)">Set
+                    Target</button>
+            </div>
+            <span class="text-xs text-gray-500">* When target will hit, notification will be send to your email.</span>
+            <div class="my-4 flex gap-3 ">
+                <div class="flex flex-col border-r border-gray-300 pr-4">
+                    <span class="text-xl">Target in percent</span>
+                    <span *ngIf="targetPrice"
+                        [ngClass]="{ 'text-green-500': getPercent(selectedStock.realTimePrice, targetPrice) >= 0, 'text-red-500': getPercent(selectedStock.realTimePrice, targetPrice) < 0 }">
+                        {{getPercent(selectedStock.realTimePrice, targetPrice) |number:'1.2-2'}}%
+                    </span>
+                </div>
+                <div class="flex flex-col pl-4">
+                    <span class="text-xl">OverAll Market</span>
+                    <span class="text-green-500">
+                        Bullish
+                        <i class="pi pi-arrow-up-right"></i>
+                    </span>
+                </div>
+            </div>
+        </div>
+
+        <div class="part-2-right">
+
+        </div>
+    </div>
+</p-drawer>
